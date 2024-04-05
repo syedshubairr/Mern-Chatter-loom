@@ -1,24 +1,27 @@
 import express from 'express';
 import 'dotenv/config';
-import {chats} from './data/data';
 import cors from 'cors';
+import {ConnectDB} from './config/Database';
+import userRouter from './routes/userRoutes';
+import {errorHandler, notFound} from './middleware/errorMiddleware';
+
 const app = express();
 const port = process.env.PORT;
 app.use(cors());
+app.use(express.json({limit: '3mb'})); // this is will the app to use JSON request.
+app.use(express.urlencoded({limit: '3mb', extended: false}));
+ConnectDB();
 app.get('/', (req, res) => {
   res.send('Backend Running');
 });
 
-app.get('/chat', (req, res) => {
-  res.send(chats);
-});
+app.use('/user', userRouter);
 
-app.get('/chat/:id', (req, res) => {
-  console.log(req.params.id);
-  const singleChat = chats.find(chat => chat._id === req.params.id);
-  res.send(singleChat);
-});
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(port, () => {
-  return console.log(`Backend is listening at http://localhost:${port}`);
+  return console.log(
+    `ChatterLoom-Backend is listening at http://localhost:${port}`,
+  );
 });

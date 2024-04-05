@@ -1,9 +1,18 @@
-import mongoose, {Schema} from 'mongoose';
+import mongoose from 'mongoose';
+import bcryptjs from 'bcryptjs';
 
-const UserModel = new mongoose.Schema(
+interface UserDocument extends Document {
+  name: string;
+  email: string;
+  password: string;
+  pic: string;
+  matchPassword(enteredPassword: string): Promise<boolean>;
+}
+
+const UserSchema = new mongoose.Schema<UserDocument>(
   {
     name: {type: 'string', required: true},
-    email: {type: 'string', required: true},
+    email: {type: 'string', required: true, unique: true},
     password: {type: 'string', required: true},
     pic: {
       type: 'string',
@@ -17,4 +26,16 @@ const UserModel = new mongoose.Schema(
   },
 );
 
-export const User = mongoose.model('User', UserModel);
+UserSchema.pre('save', async function (next) {
+  if (!this.isModified()) {
+    next();
+  }
+  const salt = await bcryptjs.genSaltSync(13);
+  this.password = await bcryptjs.hashSync(this.password, salt);
+});
+
+UserSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcryptjs.compare(enteredPassword, this.password);
+};
+
+export const User = mongoose.model<UserDocument>('User', UserSchema);

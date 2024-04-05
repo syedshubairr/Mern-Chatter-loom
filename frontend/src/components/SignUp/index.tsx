@@ -8,18 +8,20 @@ import {
   InputGroup,
   InputRightElement,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 import React, {useState} from 'react';
 import {handlePost, onSubmit} from './utils';
-
 const Signup = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [pic, setPic] = useState<string>('');
+  const [pic, setPic] = useState<string | unknown>('');
   const [showPass, setShowPass] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const toast = useToast(); // TODO: make a separate component for toast.
   return (
     <VStack spacing="5px">
       <FormControl id="name" isRequired>
@@ -33,6 +35,19 @@ const Signup = () => {
           <FormHelperText>Error Text.</FormHelperText>
         ) : (
           <FormErrorMessage>Name is required.</FormErrorMessage>
+        )}
+      </FormControl>
+      <FormControl id="email" isRequired>
+        <FormLabel>Email</FormLabel>
+        <Input
+          placeholder="Enter your Email"
+          onChange={e => setEmail(e.target.value)}
+          value={email}
+        />
+        {isError ? (
+          <FormHelperText>Error Text.</FormHelperText>
+        ) : (
+          <FormErrorMessage>Email is required.</FormErrorMessage>
         )}
       </FormControl>
       <FormControl id="password" isRequired>
@@ -88,13 +103,14 @@ const Signup = () => {
         <Input
           type="file"
           p={3}
-          accept="image/*"
-          onChange={e => handlePost(e.target.files[0])}
+          accept="image/jpeg, image/png, image/jpg"
+          onChange={e => handlePost(e.target.files, toast, setLoading, setPic)}
         />
       </FormControl>
       <Button
         colorScheme="blue"
         width={'100%'}
+        isLoading={loading}
         style={{marginTop: 15}}
         onClick={onSubmit}>
         Sign Up
