@@ -3,7 +3,6 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  FormHelperText,
   Input,
   InputGroup,
   InputRightElement,
@@ -22,20 +21,27 @@ const Signup = () => {
   const [isError, setIsError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const toast = useToast(); // TODO: make a separate component for toast.
+  // const resetState = () => {
+  //   setIsError(false);
+  //   setLoading(false);
+  //   setName('');
+  //   setEmail('');
+  //   setPassword('');
+  //   setConfirmPassword('');
+  //   setShowPass(false);
+  //   toast({});
+  // };
   return (
-    <VStack spacing="5px">
+    <VStack spacing="2.5px">
       <FormControl id="name" isRequired>
         <FormLabel>Name</FormLabel>
         <Input
           placeholder="Enter your Name"
           onChange={e => setName(e.target.value)}
           value={name}
+          type="text"
         />
-        {isError ? (
-          <FormHelperText>Error Text.</FormHelperText>
-        ) : (
-          <FormErrorMessage>Name is required.</FormErrorMessage>
-        )}
+        {isError && <FormErrorMessage>Name is required</FormErrorMessage>}
       </FormControl>
       <FormControl id="email" isRequired>
         <FormLabel>Email</FormLabel>
@@ -43,12 +49,9 @@ const Signup = () => {
           placeholder="Enter your Email"
           onChange={e => setEmail(e.target.value)}
           value={email}
+          type="email"
         />
-        {isError ? (
-          <FormHelperText>Error Text.</FormHelperText>
-        ) : (
-          <FormErrorMessage>Email is required.</FormErrorMessage>
-        )}
+        {isError && <FormErrorMessage>Email is required</FormErrorMessage>}
       </FormControl>
       <FormControl id="password" isRequired>
         <FormLabel>Password</FormLabel>
@@ -67,11 +70,7 @@ const Signup = () => {
               {showPass ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
-          {isError ? (
-            <FormHelperText>Error Text.</FormHelperText>
-          ) : (
-            <FormErrorMessage>Name is required.</FormErrorMessage>
-          )}
+          {isError && <FormErrorMessage>Password is required</FormErrorMessage>}
         </InputGroup>
       </FormControl>
       <FormControl id="confirmPassword" isRequired>
@@ -91,10 +90,10 @@ const Signup = () => {
               {showPass ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
-          {isError ? (
-            <FormHelperText>Error Text.</FormHelperText>
-          ) : (
-            <FormErrorMessage>Name is required.</FormErrorMessage>
+          {isError && (
+            <FormErrorMessage id="confirmPassword">
+              Confirm Password is required
+            </FormErrorMessage>
           )}
         </InputGroup>
       </FormControl>
@@ -112,7 +111,18 @@ const Signup = () => {
         width={'100%'}
         isLoading={loading}
         style={{marginTop: 15}}
-        onClick={onSubmit}>
+        onClick={() =>
+          onSubmit(
+            name,
+            email,
+            password,
+            confirmPassword,
+            pic,
+            setIsError,
+            setLoading,
+            toast,
+          )
+        }>
         Sign Up
       </Button>
     </VStack>

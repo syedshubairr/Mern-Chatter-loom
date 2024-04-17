@@ -8,6 +8,7 @@ import {
   InputGroup,
   InputRightElement,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 import React, {useState} from 'react';
 import {onLogin} from './utils';
@@ -16,29 +17,34 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState<boolean>(false);
-  const [isError, setIsError] = useState(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const toast = useToast(); // TODO: make a separate component for toast.
+  const resetState = () => {
+    setPassword('');
+    setIsError(false);
+    setIsLoading(false);
+  };
   return (
     <VStack spacing="5px">
-      <FormControl id="name" isRequired>
-        <FormLabel>Name</FormLabel>
+      <FormControl id="email" isRequired isInvalid={isError}>
+        <FormLabel>Email</FormLabel>
         <Input
-          placeholder="Enter your Name"
+          placeholder="Enter your email"
           onChange={e => setEmail(e.target.value)}
           value={email}
         />
-        {isError ? (
-          <FormHelperText>Error Text.</FormHelperText>
-        ) : (
-          <FormErrorMessage>Name is required.</FormErrorMessage>
+        {isError && !email && (
+          <FormErrorMessage>Email is required.</FormErrorMessage>
         )}
       </FormControl>
-      <FormControl id="password" isRequired>
+      <FormControl id="password" isRequired isInvalid={isError}>
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input
             value={password}
             type={showPass ? 'text' : 'password'}
-            placeholder="Enter your Password"
+            placeholder="Enter your password"
             onChange={e => setPassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
@@ -49,18 +55,17 @@ const Login = () => {
               {showPass ? 'Hide' : 'Show'}
             </Button>
           </InputRightElement>
-          {isError ? (
-            <FormHelperText>Error Text.</FormHelperText>
-          ) : (
-            <FormErrorMessage>Name is required.</FormErrorMessage>
-          )}
         </InputGroup>
+        {isError && <FormErrorMessage>Password is required.</FormErrorMessage>}
       </FormControl>
       <Button
         colorScheme="blue"
         width={'100%'}
         style={{marginTop: 15}}
-        onClick={onLogin}>
+        isLoading={isLoading}
+        onClick={() =>
+          onLogin(email, password, setIsError, setIsLoading, resetState, toast)
+        }>
         Login
       </Button>
       <Button

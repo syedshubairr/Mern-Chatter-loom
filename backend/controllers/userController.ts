@@ -6,6 +6,7 @@ import {registerUserPasswordValidation} from '../validations/userValidations';
 
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log('Register API HIT');
     const {name, email, password, confirmPassword, pic} = req.body;
     if (!registerUserPasswordValidation(password, confirmPassword)) {
       res
@@ -38,6 +39,7 @@ export const registerUser = asyncHandler(
   },
 );
 export const login = asyncHandler(async (req: Request, res: Response) => {
+  console.log('Login API HIT');
   const {email, password} = req.body;
   if (!email || !password) {
     res.status(400).json({error: 'Username or Password cannot be empty'});
