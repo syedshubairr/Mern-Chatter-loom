@@ -30,6 +30,7 @@ export const onLogin = (
     setIsLoading(false);
     console.log('RESPONSE Login', response);
     if (response.status === 200) {
+      localStorage.setItem('userInfo', JSON.stringify(response.data));
       resetState();
       toast({
         title: 'Login Successful',

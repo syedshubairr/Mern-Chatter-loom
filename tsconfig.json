@@ -2,10 +2,12 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
+    "removeComments": true,
     "target": "ES6",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "typeRoots": ["./node_module/@types", "./backend/types"]
     // "baseUrl": ""
   },
   "exclude": ["./frontend"],

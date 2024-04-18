@@ -3,6 +3,7 @@ import asyncHandler from 'express-async-handler';
 import {User} from '../models/UserModal';
 import {GenerateToken} from '../config/tokenGenerate';
 import {registerUserPasswordValidation} from '../validations/userValidations';
+import {FilterQuery} from 'mongoose';
 
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
@@ -59,4 +60,17 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     res.status(401).json({error: 'Invalid username or password'});
     throw new Error('Invalid Email or Password');
   }
+});
+export const allUsers = asyncHandler(async (req: Request, res: Response) => {
+  console.log('AllUsers API HIT');
+  const keyword: FilterQuery<any> = req.query.search
+    ? {
+        $or: [
+          {name: {$regex: req.query.search, $options: 'i'}},
+          {email: {$regex: req.query.search, $options: 'i'}},
+        ],
+      }
+    : {};
+  const users = await User.find(keyword).find({_id: {$ne: req.user._id}});
+  res.status(200).json(users);
 });

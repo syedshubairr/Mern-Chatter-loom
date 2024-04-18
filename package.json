@@ -5,7 +5,8 @@
   "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && nodemon --ignore ./frontend/ backend/server.ts",
+    "build": "tsc && nodemon --ignore ./frontend/ backend/server.ts",
+    "start": "ts-node --files backend/server.ts",
     "lint": "eslint . --ext --jsx .ts"
   },
   "author": "Shubair Raza",
