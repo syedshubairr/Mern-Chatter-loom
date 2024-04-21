@@ -4,6 +4,7 @@ import cors from 'cors';
 import {ConnectDB} from './config/Database';
 import userRouter from './routes/userRoutes';
 import {errorHandler, notFound} from './middleware/errorMiddleware';
+import chatRouter from './routes/chatRoutes';
 
 const app = express();
 const port = process.env.PORT;
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/user', userRouter);
+app.use('/chat', chatRouter);
 
 app.use(notFound);
 app.use(errorHandler);
