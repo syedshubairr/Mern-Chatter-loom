@@ -8,6 +8,7 @@ export const accessChat = asyncHandler(async (req: Request, res: Response) => {
   const {userId} = req.body;
   if (!userId) {
     res.status(400).json({message: 'Unable to find chat'});
+    return;
   }
   let isChat: any = await Chat.find({
     isGroupChat: false,
@@ -24,6 +25,7 @@ export const accessChat = asyncHandler(async (req: Request, res: Response) => {
   });
   if (isChat.length > 0) {
     res.status(200).json(isChat);
+    return;
   } else {
     const chatData = {
       chatName: 'sender',
@@ -63,3 +65,33 @@ export const fetchChats = asyncHandler(async (req: Request, res: Response) => {
     throw new Error(error.message);
   }
 });
+export const createGroupChat = asyncHandler(
+  async (req: Request, res: Response) => {
+    if (!req.body.users || !req.body.name) {
+      res.status(400).json({message: 'Please Fill all the fields.'});
+      return;
+    }
+    const users = JSON.parse(req.body.users);
+    if (users.length < 2) {
+      res
+        .status(200)
+        .json({message: 'More than 2 users required to form a group chat'});
+    }
+    users.push(req.user);
+    try {
+      const groupChat = await Chat.create({
+        chatName: req.body.name,
+        users: users,
+        isGroupChat: true,
+        groupAdmin: req.user,
+      });
+      const fullGroupChat = await Chat.findOne({_id: groupChat._id})
+        .populate('users', '-password')
+        .populate('groupAdmin', '-password');
+      res.status(200).json(fullGroupChat);
+    } catch (error) {
+      res.status(400);
+      throw new Error(error.message);
+    }
+  },
+);
