@@ -3,25 +3,28 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  FormHelperText,
   Input,
   InputGroup,
   InputRightElement,
   Button,
   useToast,
-} from '@chakra-ui/react';
-import React, {useState} from 'react';
-import {onLogin} from './utils';
+} from "@chakra-ui/react";
+import React, { useState } from "react";
+import { onLogin } from "./utils";
+import { useRouter } from "next/router";
+import { useAppDispatch } from "@/redux/store";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast(); // TODO: make a separate component for toast.
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const resetState = () => {
-    setPassword('');
+    setPassword("");
     setIsError(false);
     setIsLoading(false);
   };
@@ -31,7 +34,7 @@ const Login = () => {
         <FormLabel>Email</FormLabel>
         <Input
           placeholder="Enter your email"
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           value={email}
         />
         {isError && !email && (
@@ -43,16 +46,17 @@ const Login = () => {
         <InputGroup>
           <Input
             value={password}
-            type={showPass ? 'text' : 'password'}
+            type={showPass ? "text" : "password"}
             placeholder="Enter your password"
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
             <Button
-              h={'1.75rem'}
+              h={"1.75rem"}
               size="sm"
-              onClick={() => setShowPass(!showPass)}>
-              {showPass ? 'Hide' : 'Show'}
+              onClick={() => setShowPass(!showPass)}
+            >
+              {showPass ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>
@@ -60,22 +64,33 @@ const Login = () => {
       </FormControl>
       <Button
         colorScheme="blue"
-        width={'100%'}
-        style={{marginTop: 15}}
+        width={"100%"}
+        style={{ marginTop: 15 }}
         isLoading={isLoading}
         onClick={() =>
-          onLogin(email, password, setIsError, setIsLoading, resetState, toast)
-        }>
+          onLogin(
+            email,
+            password,
+            setIsError,
+            setIsLoading,
+            resetState,
+            toast,
+            router,
+            dispatch
+          )
+        }
+      >
         Login
       </Button>
       <Button
         colorScheme="red"
-        width={'100%'}
-        style={{marginTop: 15}}
+        width={"100%"}
+        style={{ marginTop: 15 }}
         onClick={() => {
-          setEmail('shubair@gmail.com');
-          setPassword('12345678');
-        }}>
+          setEmail("shubair@gmail.com");
+          setPassword("12345678");
+        }}
+      >
         Get Guest Credentials
       </Button>
     </VStack>
