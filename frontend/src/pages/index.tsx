@@ -15,10 +15,12 @@ import {
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 export default function Home() {
-  const data = useAppSelector((state: RootState) => state.user.userData);
+  const { token } = useAppSelector((state: RootState) => state.user.userData);
   const router = useRouter();
   useEffect(() => {
-    if (data) router.push("/chat");
+    if (token) {
+      router.push("/chat");
+    }
   }, []);
   return (
     <div className="App">

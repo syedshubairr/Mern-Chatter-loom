@@ -37,7 +37,7 @@ export const onLogin = (
       localStorage.setItem("userInfo", JSON.stringify(response.data));
       dispatch(setUserData(response.data));
       resetState();
-      router.push("/chats");
+      router.push("/chat");
       toast({
         title: "Login Successful",
         status: "success",
